@@ -36,9 +36,12 @@ object ReleaseExtras {
   }
 
   private def git(st: State): Git = {
-    st.extract.get(versionControlSystem).collect {
-      case git: Git => git
-    }.getOrElse(sys.error("Aborting release. Working directory is not a repository of a Git."))
+    st.extract
+      .get(versionControlSystem)
+      .collect {
+        case git: Git => git
+      }
+      .getOrElse(sys.error("Aborting release. Working directory is not a repository of a Git."))
   }
 
   /**  This release step involves following actions:
@@ -65,8 +68,9 @@ object ReleaseExtras {
 
     // add manifest attribute 'Vcs-Release-Branch' to current settings
     val withManifestAttributeState = reapply(Seq[Setting[_]](
-      packageOptions += ManifestAttributes("Vcs-Release-Branch" -> branch)
-    ), branchState)
+                                               packageOptions += ManifestAttributes("Vcs-Release-Branch" -> branch)
+                                             ),
+                                             branchState)
 
     val publishArtifactsState = publishArtifacts.action(withManifestAttributeState)
 
@@ -86,9 +90,11 @@ object ReleaseExtras {
     */
   lazy val bumpUpVersionInExamples: ReleaseStep = { st: State =>
     val repo = st.extract.get(examples.repo)
-    val (releaseV, nextV) = st.get(versions).getOrElse(
-      sys.error("No versions are set! Was this release part executed before inquireVersions?")
-    )
+    val (releaseV, nextV) = st
+      .get(versions)
+      .getOrElse(
+        sys.error("No versions are set! Was this release part executed before inquireVersions?")
+      )
     val tag = st.extract.get(examples.tag).format(releaseV)
     val comment = st.extract.get(examples.tagComment).format(releaseV)
     val commitMsg = st.extract.get(examples.commitMessage)
@@ -114,12 +120,14 @@ object ReleaseExtras {
       if (vc.hasUpstream) {
         defaultChoice orElse SimpleReader.readLine("Push changes to the remote repository (y/n)? [y] ") match {
           case Yes() | Some("") =>
-            st.log.info("git push sends its console output to standard error, which will cause the next few lines to be marked as [error].")
+            st.log.info(
+              "git push sends its console output to standard error, which will cause the next few lines to be marked as [error].")
             vc.pushChanges !! st.log
           case _ => st.log.warn("Remember to push the changes yourself!")
         }
       } else {
-        st.log.info(s"Changes were NOT pushed, because no upstream branch is configured for the local branch [${vc.currentBranch}]")
+        st.log.info(
+          s"Changes were NOT pushed, because no upstream branch is configured for the local branch [${vc.currentBranch}]")
       }
     }
 

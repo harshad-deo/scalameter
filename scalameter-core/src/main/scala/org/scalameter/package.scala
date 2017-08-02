@@ -1,23 +1,20 @@
 package org
 
-
-
 import scala.collection._
 import scala.language.implicitConversions
 import scala.language.postfixOps
 import scala.language.existentials
 
-
-
-package object scalameter extends MeasureBuilder[Unit, Double](
-  Context.inlineBenchmarking,
-  Warmer.Zero,
-  MeasureBuilder.timeMeasurer,
-  MeasureBuilder.unitRegen,
-  MeasureBuilder.doNothing,
-  MeasureBuilder.doNothing,
-  MeasureBuilder.average
-) {
+package object scalameter
+    extends MeasureBuilder[Unit, Double](
+      Context.inlineBenchmarking,
+      Warmer.Zero,
+      MeasureBuilder.timeMeasurer,
+      MeasureBuilder.unitRegen,
+      MeasureBuilder.doNothing,
+      MeasureBuilder.doNothing,
+      MeasureBuilder.average
+    ) {
 
   type KeyValue = (Key[T], T) forSome { type T }
 
@@ -44,7 +41,7 @@ package object scalameter extends MeasureBuilder[Unit, Double](
   def extractClasspath(classLoader: ClassLoader, default: => String): String =
     ClassPath.extract(classLoader, default).mkString
 
-  def withTestContext[U](ctx: Context, log: Log, handler: Events)(body: =>U) = {
+  def withTestContext[U](ctx: Context, log: Log, handler: Events)(body: => U) = {
     var res: U = null.asInstanceOf[U]
     for {
       _ <- dyn.log.using(log)
@@ -55,9 +52,8 @@ package object scalameter extends MeasureBuilder[Unit, Double](
   }
 }
 
-
 package scalameter {
 
   case class MeasurementData[T](complete: Seq[T], success: Boolean)
-  
+
 }

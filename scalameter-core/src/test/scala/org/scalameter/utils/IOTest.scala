@@ -3,8 +3,7 @@ package org.scalameter.utils
 import java.io.{File, FileOutputStream}
 
 import org.scalatest.prop.PropertyChecks
-import org.scalatest.{Matchers, FunSuite}
-
+import org.scalatest.{FunSuite, Matchers}
 
 class IOTest extends FunSuite with PropertyChecks with Matchers {
   test("IO.readFromFile should slurp all bytes") {
@@ -17,7 +16,7 @@ class IOTest extends FunSuite with PropertyChecks with Matchers {
       fos.close()
 
       val bytes = IO.readFromFile(file, chunkSize = 8)
-      bytes should === (o)
+      bytes should ===(o)
     }
   }
 }

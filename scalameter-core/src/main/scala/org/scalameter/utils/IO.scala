@@ -1,14 +1,14 @@
 package org.scalameter.utils
 
-import java.io.{File, FileInputStream, ByteArrayOutputStream, InputStream}
+import java.io.{ByteArrayOutputStream, File, FileInputStream, InputStream}
 import scala.annotation.tailrec
 
-
 object IO {
+
   /** Reads all bytes from given [[java.io.InputStream]].
-   *
-   *  Note that this method does not close supplied stream.
-   */
+    *
+    *  Note that this method does not close supplied stream.
+    */
   def readFromInputStream(from: InputStream, chunkSize: Int = 2048): Array[Byte] = {
     val buffer = new Array[Byte](chunkSize)
     val output = new ByteArrayOutputStream(chunkSize)

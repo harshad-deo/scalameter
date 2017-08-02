@@ -3,7 +3,6 @@ package org.scalameter.persistence
 import org.scalameter._
 import org.scalameter.reporting.RegressionReporter
 
-
 class RangeBenchmark(override val persistor: Persistor) extends Bench.LocalTime {
   override def reporter = new reporting.RegressionReporter(
     RegressionReporter.Tester.Accepter(),
@@ -18,8 +17,8 @@ class RangeBenchmark(override val persistor: Persistor) extends Bench.LocalTime 
 
   performance of "Range" in {
     measure method "map" in {
-      using(ranges) in {
-        r => r.map(_ + 1)
+      using(ranges) in { r =>
+        r.map(_ + 1)
       }
     }
   }

@@ -2,7 +2,6 @@ package org.scalameter
 
 import org.scalameter.picklers.Pickler
 
-
 case class Parameter[T: Pickler](fullName: String) extends PicklerBasedKey[T] {
   val pickler: Pickler[T] = implicitly[Pickler[T]]
 

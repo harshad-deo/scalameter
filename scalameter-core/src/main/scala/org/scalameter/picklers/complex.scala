@@ -1,11 +1,7 @@
 package org.scalameter.picklers
 
-
-
 import java.io.File
 import org.scalameter.utils.ClassPath
-
-
 
 object ClassPathPickler extends Pickler[ClassPath] {
   override def pickle(x: ClassPath): Array[Byte] =

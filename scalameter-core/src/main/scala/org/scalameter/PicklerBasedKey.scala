@@ -2,9 +2,9 @@ package org.scalameter
 
 import org.scalameter.picklers.Pickler
 
-
 /* A mixin for keys whose values require pickler based serialization. */
 trait PicklerBasedKey[T] extends Serializable {
+
   /** Name of the key that will be serialized. */
   def fullName: String
 
@@ -18,11 +18,12 @@ trait PicklerBasedKey[T] extends Serializable {
 }
 
 object PicklerBasedKey {
+
   /** Reconstructs key from serialized string.
-   *
-   *  @param str serialized string
-   *  @param constructor factory method to create specific key instance
-   */
+    *
+    *  @param str serialized string
+    *  @param constructor factory method to create specific key instance
+    */
   def fromString[K <: PicklerBasedKey[_]](str: String, constructor: (String, Pickler[_]) => K): K = {
     val splitIdx = str.lastIndexOf('|')
     if (splitIdx == -1) sys.error("""Invalid key string. It should have following the form "fullName|picklerClass".""")

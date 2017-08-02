@@ -1,11 +1,7 @@
 package org.scalameter.examples
 
-
-
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-
-
 
 class RegressionTest extends Bench.OfflineReport {
 
@@ -25,7 +21,6 @@ class RegressionTest extends Bench.OfflineReport {
   }
 
 }
-
 
 class RegressionTest2 extends Bench.OfflineReport {
 
@@ -47,7 +42,6 @@ class RegressionTest2 extends Bench.OfflineReport {
 
 }
 
-
 trait RegressionTest3 extends Bench.OfflineReport {
 
   val sizes = Gen.single("size")(500000)
@@ -68,13 +62,3 @@ trait RegressionTest3 extends Bench.OfflineReport {
   }
 
 }
-
-
-
-
-
-
-
-
-
-

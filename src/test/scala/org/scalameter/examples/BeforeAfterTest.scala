@@ -1,12 +1,8 @@
 package org.scalameter
 package examples
 
-
-
 import reporting._
 import Key._
-
-
 
 class BeforeAfterTest extends Bench.OfflineReport {
 
@@ -30,18 +26,3 @@ class BeforeAfterTest extends Bench.OfflineReport {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

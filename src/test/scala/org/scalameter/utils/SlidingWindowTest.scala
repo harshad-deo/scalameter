@@ -1,10 +1,6 @@
 package org.scalameter.utils
 
-
-
 import org.scalatest.FunSuite
-
-
 
 class SlidingWindowTest extends FunSuite {
 
@@ -26,7 +22,7 @@ class SlidingWindowTest extends FunSuite {
 
   def testSumOverflow(capacity: Int, size: Int) {
     val sw = newSlidingWindow(capacity, size)
-    val expected = 
+    val expected =
       if (size > capacity) ((size - capacity) until size).sum
       else size * (size - 1) / 2
     assert(sw.sum == expected, (capacity, size, expected, sw, sw.sum))
@@ -34,7 +30,8 @@ class SlidingWindowTest extends FunSuite {
 
   def testIterator(capacity: Int, size: Int) {
     val sw = newSlidingWindow(capacity, size)
-    if (size > capacity) assert(((size - capacity) until size) sameElements sw.iterator.toList, (capacity, size, sw, sw.iterator.toList))
+    if (size > capacity)
+      assert(((size - capacity) until size) sameElements sw.iterator.toList, (capacity, size, sw, sw.iterator.toList))
     else assert((0 until size) sameElements sw.iterator.toList, (capacity, size, sw, sw.iterator.toList, sw.iterator))
   }
 

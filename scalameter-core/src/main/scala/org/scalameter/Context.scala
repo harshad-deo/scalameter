@@ -1,12 +1,8 @@
 package org.scalameter
 
-
-
 import language.implicitConversions
-import scala.collection.{Seq, immutable}
+import scala.collection.{immutable, Seq}
 import org.scalameter.Key._
-
-
 
 case class Context(properties: immutable.Map[Key[_], Any]) {
   def -[T](t: Key[T]) = Context(properties - t)
@@ -37,11 +33,10 @@ case class Context(properties: immutable.Map[Key[_], Any]) {
   override def toString = {
     val proplines = properties.map {
       case (key, value) => s"$key -> $value"
-    } mkString("\n")
+    } mkString ("\n")
     s"Context(\n$proplines\n)"
   }
 }
-
 
 object Context {
   def apply(xs: KeyValue*) = new Context(xs.asInstanceOf[Seq[(Key[_], Any)]].toMap)
@@ -78,9 +73,7 @@ object Context {
     Key.machine.hostname -> java.net.InetAddress.getLocalHost.getHostName
   )
 
-  @deprecated(
-    "This implicit will be removed in 0.6. Replace config(opts: _*) with config(opts).",
-    "0.5")
+  @deprecated("This implicit will be removed in 0.6. Replace config(opts: _*) with config(opts).", "0.5")
   implicit def toKeyValues(ctx: Context): Seq[KeyValue] =
     ctx.properties.toSeq.asInstanceOf[Seq[KeyValue]]
 }

@@ -1,11 +1,7 @@
 package org.scalameter
 
-
-
 import collection._
 import util.parsing.combinator._
-
-
 
 object Main {
 
@@ -38,14 +34,16 @@ object Main {
 
     def fromCommandLineArgs(args: Array[String]) = {
       def arguments: Parser[Configuration] = rep(arg) ^^ {
-        case configs => configs.foldLeft(Configuration(Nil, Context.empty)) {
-          case (acc, x) => Configuration(acc.benches ++ x.benches, acc.context ++ x.context)
-        }
+        case configs =>
+          configs.foldLeft(Configuration(Nil, Context.empty)) {
+            case (acc, x) => Configuration(acc.benches ++ x.benches, acc.context ++ x.context)
+          }
       }
       def arg: Parser[Configuration] = benches | intsetting | resdir | scopefilt | flag
-      def listOf(flagname: String, shorthand: String): Parser[Seq[String]] = "-" ~ (flagname | shorthand) ~ classnames ^^ {
-        case _ ~ _ ~ classnames => classnames
-      }
+      def listOf(flagname: String, shorthand: String): Parser[Seq[String]] =
+        "-" ~ (flagname | shorthand) ~ classnames ^^ {
+          case _ ~ _ ~ classnames => classnames
+        }
       def classnames: Parser[Seq[String]] = repsep(classname, ":")
       def classname: Parser[String] = repsep(ident, ".") ^^ { _.mkString(".") }
       def benches: Parser[Configuration] = listOf("benches", "b") ^^ {
@@ -66,9 +64,11 @@ object Main {
       def stringLit = "['\"]".r ~ rep("[^'']".r) ~ "['\"]".r ^^ {
         case _ ~ cs ~ _ => cs.mkString
       }
-      def scopefilt: Parser[Configuration] = "-" ~ "CscopeFilter" ~ (stringLit | failure("scopeFilter must be followed by a single or double quoted string.")) ^^ {
-        case _ ~ _ ~ s => Configuration(Nil, Context(scopeFilter -> s))
-      }
+      def scopefilt: Parser[Configuration] =
+        "-" ~ "CscopeFilter" ~ (stringLit | failure(
+          "scopeFilter must be followed by a single or double quoted string.")) ^^ {
+          case _ ~ _ ~ s => Configuration(Nil, Context(scopeFilter -> s))
+        }
       def flag: Parser[Configuration] = "-" ~ ("silent" | "verbose" | "preJDK7") ^^ {
         case _ ~ "verbose" => Configuration(Nil, Context(Key.verbose -> true))
         case _ ~ "silent" => Configuration(Nil, Context(Key.verbose -> false))
@@ -84,18 +84,3 @@ object Main {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

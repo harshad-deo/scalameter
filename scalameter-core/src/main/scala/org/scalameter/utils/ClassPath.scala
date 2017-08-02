@@ -1,20 +1,17 @@
 package org.scalameter.utils
 
-
-
 import java.io.File
 import java.net._
 import org.apache.commons.lang3.SystemUtils
 
-
-
 class ClassPath private (val paths: Seq[File]) extends Serializable {
+
   /** Returns platform dependent classpath string.
-   */
+    */
   def mkString: String = paths.map(_.getAbsolutePath).mkString(File.pathSeparator)
 
   /** Prepends jar or directory containing classes to the classpath.
-   */
+    */
   def +:(location: File) = {
     ClassPath.validate(location)
     new ClassPath(location +: paths)
@@ -36,7 +33,7 @@ object ClassPath {
   private def validate(location: File) = {
     val elem = location.getAbsolutePath
     require(!elem.contains(File.pathSeparatorChar),
-      s"Classpath element contains illegal character: ${File.pathSeparatorChar}")
+            s"Classpath element contains illegal character: ${File.pathSeparatorChar}")
     if (SystemUtils.IS_OS_WINDOWS) {
       require(!elem.contains("\""), "Classpath element contains illegal character: \"")
     }
@@ -47,23 +44,23 @@ object ClassPath {
   }
 
   /** Constructs [[ClassPath]] from given list of strings validating them first.
-   */
+    */
   def apply(paths: Seq[File]): ClassPath = {
     paths.foreach(validate)
     new ClassPath(paths)
   }
 
   /** Returns the default classpath string.
-   */
+    */
   def default: ClassPath = {
     extract(this.getClass.getClassLoader, sys.props("java.class.path"))
   }
 
   /** Extracts the classpath from the given `classLoader` if it is a `URLClassLoader` or
-   *  from the first parent that is a `URLClassLoader`.
-   *  If no `URLClassLoader` can be found, returns the `default` classpath.
-   */
-  def extract(classLoader: ClassLoader, default: =>String): ClassPath =
+    *  from the first parent that is a `URLClassLoader`.
+    *  If no `URLClassLoader` can be found, returns the `default` classpath.
+    */
+  def extract(classLoader: ClassLoader, default: => String): ClassPath =
     classLoader match {
       case urlclassloader: URLClassLoader =>
         ClassPath(extractFileClasspaths(urlclassloader.getURLs))

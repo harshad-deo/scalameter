@@ -1,13 +1,6 @@
 package org.scalameter
 
-
-
-
-
-
-package object picklers {
-}
-
+package object picklers {}
 
 package picklers {
   object Implicits {

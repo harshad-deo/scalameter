@@ -1,12 +1,8 @@
 package org.scalameter
 
-
-
 import javax.management._
 import collection._
 import JavaConversions._
-
-
 
 package object utils {
 

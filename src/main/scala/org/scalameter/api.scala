@@ -1,24 +1,24 @@
 package org.scalameter
 
 /** Import the contents of this singleton object to obtain access to most abstractions
- *  in the ScalaMeter API.
- *
- *  Note that some definitions might shadow others, so if you import the contents of
- *  this object, you should not import the contents of other packages directly.
- *
- *  This object contains:
- *  - basic datatypes and singleton objects for writing tests, such as `PerformanceTest`
- *  - all the context map keys
- *  - contents of the `execution` package
- *  - contents of the `reporting` package
- *  - contents of the `persistence` package
- *  - the `Executor.Measurer` object
- *  - the `RegressionReporter.Tester` object
- *  - the `RegressionReporter.Historian` object
- *  - the `ChartReporter.ChartFactory` object
- *  - the `HtmlReporter.Renderer` object
- *  - and much more...
- */
+  *  in the ScalaMeter API.
+  *
+  *  Note that some definitions might shadow others, so if you import the contents of
+  *  this object, you should not import the contents of other packages directly.
+  *
+  *  This object contains:
+  *  - basic datatypes and singleton objects for writing tests, such as `PerformanceTest`
+  *  - all the context map keys
+  *  - contents of the `execution` package
+  *  - contents of the `reporting` package
+  *  - contents of the `persistence` package
+  *  - the `Executor.Measurer` object
+  *  - the `RegressionReporter.Tester` object
+  *  - the `RegressionReporter.Historian` object
+  *  - the `ChartReporter.ChartFactory` object
+  *  - the `HtmlReporter.Renderer` object
+  *  - and much more...
+  */
 object api extends Keys {
 
   type Gen[T] = org.scalameter.Gen[T]

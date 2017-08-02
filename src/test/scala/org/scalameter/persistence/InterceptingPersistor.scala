@@ -5,10 +5,9 @@ import java.io.File
 
 import scala.collection.mutable
 
-
 /** Intercepts [[org.scalameter.History]] before serializing it
- *  using underlying [[org.scalameter.persistence.IOStreamPersistor]] to allow testing of correctness.
- */
+  *  using underlying [[org.scalameter.persistence.IOStreamPersistor]] to allow testing of correctness.
+  */
 class InterceptingPersistor(underlying: IOStreamPersistor[_, _]) extends Persistor {
   private val _cache: mutable.Map[Context, History[_]] = mutable.Map.empty
 

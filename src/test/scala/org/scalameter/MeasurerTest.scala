@@ -1,12 +1,8 @@
 package org.scalameter
 
-
-
 import org.scalameter.api._
 import org.scalameter.execution.JvmRunner
 import org.scalatest.{FunSuite, Matchers}
-
-
 
 abstract class MeasurerTest[V, M <: Measurer[V]] extends FunSuite with Matchers {
   def measureWith(measurer: M)(snippet: => Any)(f: V => Any): Any = {
@@ -21,8 +17,8 @@ abstract class MeasurerTest[V, M <: Measurer[V]] extends FunSuite with Matchers 
     }
     measurer.afterExecution(ctx)
 
-    result.isSuccess should === (true)
-    result.get.length should === (1)
+    result.isSuccess should ===(true)
+    result.get.length should ===(1)
     f(result.get.head)
   }
 }

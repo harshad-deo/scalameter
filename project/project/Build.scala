@@ -1,11 +1,6 @@
-
-
-
 import java.io.File
 import sbt._
 import sbt.Keys._
-
-
 
 object Plugins extends Build {
   val mechadir = new File(s"mecha")
@@ -34,8 +29,7 @@ object Plugins extends Build {
       // Use a subdirectory of the staging directory for the new plugin build.
       // The subdirectory name is derived from a hash of the URI,
       // and so identical URIs will resolve to the same directory.
-      val hashDir = new File(info.staging,
-          Hash.halfHashString(info.uri.normalize.toASCIIString))
+      val hashDir = new File(info.staging, Hash.halfHashString(info.uri.normalize.toASCIIString))
       hashDir.mkdirs()
 
       // Return the original git resolver that will do the actual work.

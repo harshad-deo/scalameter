@@ -1,18 +1,13 @@
 package org.scalameter
 
-
-
 import collection._
 import compat._
 import utils.withGCNotification
-
-
 
 trait Warmer extends Serializable {
   def name: String
   def warming(ctx: Context, setup: () => Any, teardown: () => Any): Foreach[Int]
 }
-
 
 object Warmer {
 

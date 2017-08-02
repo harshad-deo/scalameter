@@ -1,21 +1,16 @@
 package org.scalameter
 
-
-
 import org.scalameter.utils.Tree
 
-
-
 /** Reporters report results of ScalaMeter benchmarks.
- *
- *  Reporters are called at the completion of each benchmark, and once more after all
- *  benchmarks complete.
- */
+  *
+  *  Reporters are called at the completion of each benchmark, and once more after all
+  *  benchmarks complete.
+  */
 trait Reporter[T] extends Serializable {
   def report(result: CurveData[T], persistor: Persistor): Unit
   def report(results: Tree[CurveData[T]], persistor: Persistor): Boolean
 }
-
 
 object Reporter {
   def None[T] = new Reporter[T] {

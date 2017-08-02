@@ -1,21 +1,16 @@
 package org.scalameter
 
-
-
 import collection._
 import org.scalameter.picklers.Pickler
 import org.scalameter.picklers.Implicits._
 
-
-
 /** Base class for ScalaMeter generators.
- *
- *  Generators create warmup and benchmark datasets for running benchmarks.
- *  They support neat combinator-style syntax for composing more complex
- *  generators out of simpler ones.
- */
-abstract class Gen[T] extends Serializable {
-  self =>
+  *
+  *  Generators create warmup and benchmark datasets for running benchmarks.
+  *  They support neat combinator-style syntax for composing more complex
+  *  generators out of simpler ones.
+  */
+abstract class Gen[T] extends Serializable { self =>
 
   def map[S](f: T => S): Gen[S] = new Gen[S] {
     def warmupset = for (x <- self.warmupset) yield f(x)
@@ -24,15 +19,17 @@ abstract class Gen[T] extends Serializable {
   }
 
   def flatMap[S](f: T => Gen[S]): Gen[S] = new Gen[S] {
-    def warmupset = for {
-      x <- self.warmupset
-      y <- f(x).warmupset
-    } yield y
-    def dataset = for {
-      selfparams <- self.dataset
-      x = self.generate(selfparams)
-      thatparams <- f(x).dataset
-    } yield selfparams ++ thatparams
+    def warmupset =
+      for {
+        x <- self.warmupset
+        y <- f(x).warmupset
+      } yield y
+    def dataset =
+      for {
+        selfparams <- self.dataset
+        x = self.generate(selfparams)
+        thatparams <- f(x).dataset
+      } yield selfparams ++ thatparams
     def generate(params: Parameters) = {
       val x = self.generate(params)
       val mapped = f(x)
@@ -40,20 +37,24 @@ abstract class Gen[T] extends Serializable {
     }
   }
 
-  def zip[S](that: Gen[S]): Gen[(T, S)] = for {
-    x <- self
-    y <- that
-  } yield (x, y)
+  def zip[S](that: Gen[S]): Gen[(T, S)] =
+    for {
+      x <- self
+      y <- that
+    } yield (x, y)
 
   def rename(mapping: (String, String)*): Gen[T] = new Gen[T] {
     val reverseMapping = mapping.map(kv => (kv._2, kv._1))
     def warmupset = self.warmupset
-    def dataset = self.dataset.map(params => params map {
-      case (k, v) => (mapping.toMap.applyOrElse(k, (k: String) => k), v)
-    })
-    def generate(params: Parameters) = self.generate(params map {
-      case (k, v) => (reverseMapping.toMap.applyOrElse(k, (k: String) => k), v)
-    })
+    def dataset =
+      self.dataset.map(params =>
+        params map {
+          case (k, v) => (mapping.toMap.applyOrElse(k, (k: String) => k), v)
+      })
+    def generate(params: Parameters) =
+      self.generate(params map {
+        case (k, v) => (reverseMapping.toMap.applyOrElse(k, (k: String) => k), v)
+      })
   }
 
   def warmupset: Iterator[T]
@@ -76,7 +77,6 @@ abstract class Gen[T] extends Serializable {
   }
 
 }
-
 
 object Gen {
 
@@ -102,7 +102,8 @@ object Gen {
 
   def exponential(axisName: String)(from: Int, until: Int, factor: Int): Gen[Int] = new Gen[Int] {
     def warmupset = Iterator.single((until - from) / 2)
-    def dataset = Iterator.iterate(from)(_ * factor).takeWhile(_ <= until).map(x => Parameters(Parameter[Int](axisName) -> x))
+    def dataset =
+      Iterator.iterate(from)(_ * factor).takeWhile(_ <= until).map(x => Parameters(Parameter[Int](axisName) -> x))
     def generate(params: Parameters) = params[Int](axisName)
   }
 
@@ -133,125 +134,123 @@ object Gen {
   }
 
   /** Provides most collection generators given that a size generator is defined.
-   */
+    */
   trait Collections {
 
     def sizes: Gen[Int]
 
     /* sequences */
 
-    def lists = for {
-      size <- sizes
-    } yield (0 until size).toList
-  
-    def arrays = for {
-      size <- sizes
-    } yield (0 until size).toArray
-  
-    def vectors = for {
-      size <- sizes
-    } yield (0 until size).toVector
-   
-    def arraybuffers = for {
-      size <- sizes
-    } yield mutable.ArrayBuffer(0 until size: _*)
-  
-    def ranges = for {
-      size <- sizes
-    } yield 0 until size
-  
+    def lists =
+      for {
+        size <- sizes
+      } yield (0 until size).toList
+
+    def arrays =
+      for {
+        size <- sizes
+      } yield (0 until size).toArray
+
+    def vectors =
+      for {
+        size <- sizes
+      } yield (0 until size).toVector
+
+    def arraybuffers =
+      for {
+        size <- sizes
+      } yield mutable.ArrayBuffer(0 until size: _*)
+
+    def ranges =
+      for {
+        size <- sizes
+      } yield 0 until size
+
     /* maps */
-  
-    def hashtablemaps = for {
-      size <- sizes
-    } yield {
-      val hm = mutable.HashMap[Int, Int]()
-      for (x <- 0 until size) hm(x) = x
-      hm
-    }
-   
-  
-    def linkedhashtablemaps = for {
-      size <- sizes
-    } yield {
-      val hm = mutable.LinkedHashMap[Int, Int]()
-      for (x <- 0 until size) hm(x) = x
-      hm
-    }
-    
-    def hashtriemaps = for {
-      size <- sizes
-    } yield {
-      var hm = immutable.HashMap[Int, Int]()
-      for (x <- 0 until size) hm += ((x, x))
-      hm
-    }
-  
-    def redblackmaps = for {
-      size <- sizes
-    } yield {
-      var am = immutable.TreeMap[Int, Int]()
-      for (x <- 0 until size) am += ((x, x))
-      am
-    }
-  
+
+    def hashtablemaps =
+      for {
+        size <- sizes
+      } yield {
+        val hm = mutable.HashMap[Int, Int]()
+        for (x <- 0 until size) hm(x) = x
+        hm
+      }
+
+    def linkedhashtablemaps =
+      for {
+        size <- sizes
+      } yield {
+        val hm = mutable.LinkedHashMap[Int, Int]()
+        for (x <- 0 until size) hm(x) = x
+        hm
+      }
+
+    def hashtriemaps =
+      for {
+        size <- sizes
+      } yield {
+        var hm = immutable.HashMap[Int, Int]()
+        for (x <- 0 until size) hm += ((x, x))
+        hm
+      }
+
+    def redblackmaps =
+      for {
+        size <- sizes
+      } yield {
+        var am = immutable.TreeMap[Int, Int]()
+        for (x <- 0 until size) am += ((x, x))
+        am
+      }
+
     /* sets */
-  
-    def hashtablesets = for {
-      size <- sizes
-    } yield {
-      val hs = mutable.HashSet[Int]()
-      for (x <- 0 until size) hs.add(x)
-      hs
-    }
-    
-    def linkedhashtablesets = for {
-      size <- sizes
-    } yield {
-      val hs = mutable.LinkedHashSet[Int]()
-      for (x <- 0 until size) hs.add(x)
-      hs
-    }
-    
-    def avlsets = for {
-      size <- sizes
-    } yield {
-      val as = mutable.TreeSet[Int]()
-      for (x <- 0 until size) as.add(x)
-      as
-    }
-  
-    def redblacksets = for {
-      size <- sizes
-    } yield {
-      var as = immutable.TreeSet[Int]()
-      for (x <- 0 until size) as += x
-      as
-    }
-  
-    def hashtriesets = for {
-      size <- sizes
-    } yield {
-      var hs = immutable.HashSet[Int]()
-      for (x <- 0 until size) hs += x
-      hs
-    }
+
+    def hashtablesets =
+      for {
+        size <- sizes
+      } yield {
+        val hs = mutable.HashSet[Int]()
+        for (x <- 0 until size) hs.add(x)
+        hs
+      }
+
+    def linkedhashtablesets =
+      for {
+        size <- sizes
+      } yield {
+        val hs = mutable.LinkedHashSet[Int]()
+        for (x <- 0 until size) hs.add(x)
+        hs
+      }
+
+    def avlsets =
+      for {
+        size <- sizes
+      } yield {
+        val as = mutable.TreeSet[Int]()
+        for (x <- 0 until size) as.add(x)
+        as
+      }
+
+    def redblacksets =
+      for {
+        size <- sizes
+      } yield {
+        var as = immutable.TreeSet[Int]()
+        for (x <- 0 until size) as += x
+        as
+      }
+
+    def hashtriesets =
+      for {
+        size <- sizes
+      } yield {
+        var hs = immutable.HashSet[Int]()
+        for (x <- 0 until size) hs += x
+        hs
+      }
 
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

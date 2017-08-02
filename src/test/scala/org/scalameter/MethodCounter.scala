@@ -2,7 +2,6 @@ package org.scalameter
 
 import scala.collection.mutable
 
-
 object MethodCounter {
   private val counter = mutable.Map.empty[String, Int]
 

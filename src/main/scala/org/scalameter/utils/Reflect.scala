@@ -7,4 +7,3 @@ object Reflect {
     module.getField("MODULE$").get(null).asInstanceOf[Bench[_]]
 
 }
-

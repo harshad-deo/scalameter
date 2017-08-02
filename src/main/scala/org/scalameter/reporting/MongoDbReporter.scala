@@ -1,8 +1,6 @@
 package org.scalameter
 package reporting
 
-
-
 import com.mongodb.casbah.Imports._
 import org.apache.commons.io._
 import org.scalameter.utils.Tree
@@ -11,10 +9,8 @@ import scala.sys.process.Process
 import spray.json._
 import spray.json.DefaultJsonProtocol._
 
-
-
 /** Logs numeric results as MongoDB documents.
- */
+  */
 case class MongoDbReporter[T: Numeric]() extends Reporter[T] {
   val url = sys.env.getOrElse("MONGODB_REPORTER_URL", "")
   val port = sys.env.getOrElse("MONGODB_REPORTER_PORT", "0").toInt
@@ -43,8 +39,7 @@ case class MongoDbReporter[T: Numeric]() extends Reporter[T] {
     }
   }
 
-  def report(result: CurveData[T], persistor: Persistor) {
-  }
+  def report(result: CurveData[T], persistor: Persistor) {}
 
   def report(result: Tree[CurveData[T]], persistor: Persistor): Boolean = {
     if (url == "") return true
@@ -53,8 +48,8 @@ case class MongoDbReporter[T: Numeric]() extends Reporter[T] {
     val db = client(database)
     val coll = db(collection)
 
-    val gitprops = IOUtils.toString(getClass.getResourceAsStream(gitPropsPath), "utf-8")
-      .parseJson.convertTo[Map[String, Any]]
+    val gitprops =
+      IOUtils.toString(getClass.getResourceAsStream(gitPropsPath), "utf-8").parseJson.convertTo[Map[String, Any]]
     val hostname = Process("hostname").!!.trim
 
     for (curve <- result; measurement <- curve.measurements) {

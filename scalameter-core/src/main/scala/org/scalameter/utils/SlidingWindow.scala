@@ -1,10 +1,5 @@
 package org.scalameter.utils
 
-
-
-
-
-
 final class SlidingWindow(_cap: Int) {
   require(_cap >= 1)
 

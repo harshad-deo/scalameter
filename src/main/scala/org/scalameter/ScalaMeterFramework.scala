@@ -1,10 +1,6 @@
 package org.scalameter
 
-
-
 import org.scalatools.testing._
-
-
 
 class ScalaMeterFramework extends Framework {
 
@@ -17,18 +13,18 @@ class ScalaMeterFramework extends Framework {
 
   def testRunner(testClassLoader: ClassLoader, loggers: Array[Logger]) = new Runner2 {
     case class TestInterfaceEvents(eventHandler: EventHandler) extends Events {
-      def emit(e: org.scalameter.Event) = eventHandler.handle(
-        new org.scalatools.testing.Event {
-        def testName = e.testName
-        def description = e.description
-        def error = e.throwable
-        def result = e.result match {
-          case Events.Success => Result.Success
-          case Events.Failure => Result.Failure
-          case Events.Error => Result.Error
-          case Events.Skipped => Result.Skipped
-        }
-      })
+      def emit(e: org.scalameter.Event) =
+        eventHandler.handle(new org.scalatools.testing.Event {
+          def testName = e.testName
+          def description = e.description
+          def error = e.throwable
+          def result = e.result match {
+            case Events.Success => Result.Success
+            case Events.Failure => Result.Failure
+            case Events.Error => Result.Error
+            case Events.Skipped => Result.Skipped
+          }
+        })
     }
 
     case class TestInterfaceLog(l: Logger) extends Log {
@@ -36,21 +32,19 @@ class ScalaMeterFramework extends Framework {
       def warn(msg: String) = l.warn(msg)
       def trace(t: Throwable) = l.trace(t)
       def info(msg: String) = l.info(msg)
-      def debug(msg: String) = if (currentContext(Key.verbose)) {
-        // if verbose is on, treat this as a normal message
-        info(msg)
-      } else l.debug(msg)
+      def debug(msg: String) =
+        if (currentContext(Key.verbose)) {
+          // if verbose is on, treat this as a normal message
+          info(msg)
+        } else l.debug(msg)
     }
 
     def computeClasspath = {
-      utils.ClassPath.extract(
-        testClassLoader,
-        sys.error(
-          s"Cannot recognize classloader (not URLClassLoader): $testClassLoader"))
+      utils.ClassPath
+        .extract(testClassLoader, sys.error(s"Cannot recognize classloader (not URLClassLoader): $testClassLoader"))
     }
 
-    def run(testClassName: String, fingerprint: Fingerprint, eventHandler: EventHandler,
-      args: Array[String]) {
+    def run(testClassName: String, fingerprint: Fingerprint, eventHandler: EventHandler, args: Array[String]) {
       val complog = Log.Composite(loggers.map(TestInterfaceLog): _*)
       val tievents = TestInterfaceEvents(eventHandler)
       val testcp = computeClasspath
@@ -61,8 +55,7 @@ class ScalaMeterFramework extends Framework {
         try fingerprint match {
           case fp: SubclassFingerprint =>
             if (!fp.isModule) {
-              val ptest = testClassLoader.loadClass(testClassName)
-                .newInstance.asInstanceOf[BasePerformanceTest[_]]
+              val ptest = testClassLoader.loadClass(testClassName).newInstance.asInstanceOf[BasePerformanceTest[_]]
               ptest.executeTests()
             } else {
               val module = Class.forName(testClassName + "$", true, testClassLoader)

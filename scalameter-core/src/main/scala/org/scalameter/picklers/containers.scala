@@ -1,7 +1,5 @@
 package org.scalameter.picklers
 
-
-
 import language.higherKinds
 
 import java.util.Date
@@ -9,10 +7,7 @@ import org.scalameter.picklers.Implicits._
 import scala.annotation.tailrec
 import scala.collection.generic.CanBuildFrom
 
-
-
-abstract class TraversablePickler[C[_] <: Traversable[_], T: Pickler]
-extends Pickler[C[T]] {
+abstract class TraversablePickler[C[_] <: Traversable[_], T: Pickler] extends Pickler[C[T]] {
   protected def canBuildFrom: CanBuildFrom[Nothing, T, C[T]]
 
   def pickle(x: C[T]): Array[Byte] = {
@@ -43,7 +38,6 @@ extends Pickler[C[T]] {
   }
 }
 
-
 abstract class OptionPickler[T: Pickler] extends Pickler[Option[T]] {
   def pickle(x: Option[T]): Array[Byte] = {
     x match {
@@ -61,15 +55,12 @@ abstract class OptionPickler[T: Pickler] extends Pickler[Option[T]] {
   }
 }
 
-
 object StringListPickler extends TraversablePickler[List, String] {
   protected def canBuildFrom = implicitly[CanBuildFrom[Nothing, String, List[String]]]
 }
 
-
-object LongSeqPickler extends TraversablePickler[Seq, Long]  {
+object LongSeqPickler extends TraversablePickler[Seq, Long] {
   protected def canBuildFrom = implicitly[CanBuildFrom[Nothing, Long, Seq[Long]]]
 }
-
 
 object DateOptionPickler extends OptionPickler[Date]

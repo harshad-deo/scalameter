@@ -1,10 +1,9 @@
 package org.scalameter
 
-
 /** Pretty prints values.
- *
- *  The default implementation simply calls `toString` method.
- */
+  *
+  *  The default implementation simply calls `toString` method.
+  */
 trait PrettyPrinter[T] extends Serializable {
   def prettyPrint(value: T): String
 }

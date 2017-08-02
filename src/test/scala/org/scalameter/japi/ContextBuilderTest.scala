@@ -4,7 +4,6 @@ import org.scalameter.api._
 import org.scalameter.utils.ClassPath
 import org.scalatest.{FunSuite, Matchers}
 
-
 class ContextBuilderTest extends FunSuite with Matchers {
   test("ContextBuilder should create the same context as direct context creation") {
     val expected = Context(
@@ -18,7 +17,7 @@ class ContextBuilderTest extends FunSuite with Matchers {
       .put("classpath", ClassPath.default)
       .build()
 
-    actual should === (expected)
+    actual should ===(expected)
   }
 
   test("ContextBuilder should throw error on invalid key insertion") {

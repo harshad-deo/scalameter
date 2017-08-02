@@ -4,14 +4,15 @@ import org.scalameter.examples._
 import org.scalatest.FunSuite
 import java.io._
 
-
 class ResultDirTest extends FunSuite {
   // java.io.File doesn't support recursive delete
   def removeAll(path: String) = {
     def getRecursively(f: File): Seq[File] =
       f.listFiles.filter(_.isDirectory).flatMap(getRecursively) ++ f.listFiles
 
-    getRecursively(new File(path)).foreach { f => f.delete() }
+    getRecursively(new File(path)).foreach { f =>
+      f.delete()
+    }
 
     new File(path).delete
   }
@@ -22,16 +23,16 @@ class ResultDirTest extends FunSuite {
       val file = new File(dir)
       if (file.exists) removeAll(file.getPath)
 
-      new RegressionTest main(Array(s"-CresultDir $dir"))
+      new RegressionTest main (Array(s"-CresultDir $dir"))
 
       val report = new File(dir, "report")
       assert(report.exists)
 
       removeAll(file.getPath)
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }
-

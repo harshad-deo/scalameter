@@ -2,12 +2,11 @@ package org.scalameter.japi
 
 import org.scalameter.{Context, Key}
 
-
 /** Builder for the [[org.scalameter.Context]] that constructs key from the path.
- *
- *  Note that it's mainly useful for the Java users.
- *  Scala users can simply directly access key containers and keys.
- */
+  *
+  *  Note that it's mainly useful for the Java users.
+  *  Scala users can simply directly access key containers and keys.
+  */
 class ContextBuilder {
   private val mapBuilder = Map.newBuilder[Key[_], Any]
 

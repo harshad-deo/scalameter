@@ -1,43 +1,42 @@
 package org.scalameter
 package execution
 
-
-
 import org.scalameter.picklers.Pickler
 import org.scalameter.utils.Tree
 import scala.collection._
 import scala.compat.Platform
 
-
-
 /** Runs warmups until the maximum number of warmups is done,
- *  or the running times have stabilized. After that, it runs
- *  the tests the specified number of times and collects
- *  the results using an `aggregate` function.
- * 
- *  Stabilization is detected by tracking the running times
- *  for which there may have been and those for which there
- *  was no garbage collection.
- *  When either of the two running times stabilizes, we consider
- *  the JVM warmed up for the snippet.
- * 
- *  We do this by registering on GC events instead of invoking
- *  `Platform.collectGarbage`, since usually the time to invoke
- *  the snippet is less than the time to perform full GC, and
- *  most triggered GC cycles are fast because they collect only
- *  the young generation.
- */
+  *  or the running times have stabilized. After that, it runs
+  *  the tests the specified number of times and collects
+  *  the results using an `aggregate` function.
+  *
+  *  Stabilization is detected by tracking the running times
+  *  for which there may have been and those for which there
+  *  was no garbage collection.
+  *  When either of the two running times stabilizes, we consider
+  *  the JVM warmed up for the snippet.
+  *
+  *  We do this by registering on GC events instead of invoking
+  *  `Platform.collectGarbage`, since usually the time to invoke
+  *  the snippet is less than the time to perform full GC, and
+  *  most triggered GC cycles are fast because they collect only
+  *  the young generation.
+  */
 class LocalExecutor[V: Pickler](
-  val warmer: Warmer, val aggregator: Aggregator[V],
-  val measurer: Measurer[V]
+    val warmer: Warmer,
+    val aggregator: Aggregator[V],
+    val measurer: Measurer[V]
 ) extends Executor[V] {
   require(!measurer.usesInstrumentedClasspath,
-    s"${measurer.getClass.getName} should be run using SeparateJvmsExecutor.")
+          s"${measurer.getClass.getName} should be run using SeparateJvmsExecutor.")
 
   import Key._
 
   override def run[T](
-    setups: Tree[Setup[T]], reporter: Reporter[V], persistor: Persistor
+      setups: Tree[Setup[T]],
+      reporter: Reporter[V],
+      persistor: Persistor
   ) = {
     // run all warmups for classloading purposes
     for (bench <- setups) {
@@ -57,8 +56,7 @@ class LocalExecutor[V: Pickler](
   def runSetup[T](bsetup: Setup[T]): CurveData[V] = {
     import bsetup._
 
-    log.verbose(
-      s"Running test set for ${context.scope}, curve ${context(dsl.curve)}")
+    log.verbose(s"Running test set for ${context.scope}, curve ${context(dsl.curve)}")
 
     // run warm up
     setupBeforeAll()
@@ -104,22 +102,9 @@ class LocalExecutor[V: Pickler](
 
 }
 
-
 object LocalExecutor extends Executor.Factory[LocalExecutor] {
 
   def apply[V: Pickler: PrettyPrinter](w: Warmer, a: Aggregator[V], m: Measurer[V]) =
     new LocalExecutor(w, a, m)
 
 }
-
-
-
-
-
-
-
-
-
-
-
-

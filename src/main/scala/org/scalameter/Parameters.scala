@@ -1,6 +1,6 @@
 package org.scalameter
 
-import scala.collection.{Iterable, immutable}
+import scala.collection.{immutable, Iterable}
 import org.scalameter.picklers.noPickler.instance
 
 @SerialVersionUID(4203959258570851399L)
@@ -8,9 +8,10 @@ case class Parameters(axisData: immutable.Map[Parameter[_], Any]) {
   def ++(that: Parameters) = Parameters(this.axisData ++ that.axisData)
   def apply[T](key: String) = axisData.apply(Parameter[T](key)).asInstanceOf[T]
   def map(f: ((String, Any)) => (String, Any)) = {
-    Parameters(axisData.map { case (k, v) =>
-      val n = f((k.fullName, v))
-      (Parameter(n._1)(k.pickler).asInstanceOf[Parameter[_]], n._2)
+    Parameters(axisData.map {
+      case (k, v) =>
+        val n = f((k.fullName, v))
+        (Parameter(n._1)(k.pickler).asInstanceOf[Parameter[_]], n._2)
     }(collection.breakOut): _*)
   }
 

@@ -1,14 +1,10 @@
 package org.scalameter
 package utils
 
-
-
 import java.io.File
 import java.net._
 import org.apache.commons.lang3.SystemUtils
 import org.scalatest.{FunSuite, Matchers}
-
-
 
 class ClassPathTest extends FunSuite with Matchers {
 

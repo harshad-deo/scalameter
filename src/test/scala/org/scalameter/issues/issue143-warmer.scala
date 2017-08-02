@@ -1,13 +1,9 @@
 package org.scalameter
 package issues
 
-
-
 import java.io._
 import org.scalatest.FunSuite
 import org.scalameter.api._
-
-
 
 class WarmerZeroTest extends FunSuite {
 

@@ -1,16 +1,12 @@
 package org.scalameter
 package reporting
 
-
-
 import org.scalameter.utils.Tree
 
-
-
 /** Validates every measurement using the `reports.validation.predicate` key.
- *
- *  This key stores the predicate function that does the validation.
- */
+  *
+  *  This key stores the predicate function that does the validation.
+  */
 case class ValidationReporter[T]() extends Reporter[T] {
 
   def report(result: CurveData[T], persistor: Persistor) {}

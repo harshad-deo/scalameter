@@ -1,6 +1,5 @@
 package org.scalameter
 
-
 case class Event(testName: String, description: String, result: Events.Result, throwable: Throwable)
 
 trait Events {

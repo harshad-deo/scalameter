@@ -1,21 +1,17 @@
 package org.scalameter.execution
 
-
-
 import java.io._
 import org.scalameter._
 import org.scalameter.utils.ClassPath
-import scala.util.{Success, Failure, Try}
+import scala.util.{Failure, Success, Try}
 import scala.sys.process._
-
-
 
 final class JvmRunner {
 
   private val tmpfile = File.createTempFile("newjvm-", "-io")
   tmpfile.deleteOnExit()
 
-  def run[R](ctx: Context)(body: =>R): Try[R] = {
+  def run[R](ctx: Context)(body: => R): Try[R] = {
     serializeInput(() => body)
     runJvm(ctx)
     readOutput[R](ctx)
@@ -39,12 +35,8 @@ final class JvmRunner {
     val command = Seq(
       jcmd,
       "-server"
-    ) ++ flags ++ Seq(
-      "-cp",
-      classpath.mkString,
-      classOf[Main].getName,
-      tmpfile.getPath)
-      //s"$jcmd $flags -cp $classpath ${classOf[Main].getName} ${tmpfile.getPath}"
+    ) ++ flags ++ Seq("-cp", classpath.mkString, classOf[Main].getName, tmpfile.getPath)
+    //s"$jcmd $flags -cp $classpath ${classOf[Main].getName} ${tmpfile.getPath}"
     dyn.currentContext.withValue(ctx) {
       log.verbose(s"Starting new JVM: ${command.mkString(" ")}")
     }

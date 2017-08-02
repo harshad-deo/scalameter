@@ -1,11 +1,7 @@
 package org.scalameter
 
-
-
 import org.scalameter.examples.BoxingCountBench
 import org.scalameter.examples.MethodInvocationCountBench
-
-
 
 class BoxingCountBenchTest extends InvocationCountMeasurerTest {
   test("BoxingCountTest.all should be deterministic") {

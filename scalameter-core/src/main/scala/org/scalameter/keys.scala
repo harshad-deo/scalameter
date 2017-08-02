@@ -1,7 +1,5 @@
 package org.scalameter
 
-
-
 import java.io.File
 import java.util.Date
 import org.scalameter.execution.invocation.instrumentation.MethodSignature
@@ -11,10 +9,7 @@ import org.scalameter.utils.ClassPath
 import scala.annotation.tailrec
 import scala.collection._
 
-
-
-class Key[T: Pickler](val name: String)(implicit container: KeyContainer)
-extends PicklerBasedKey[T] {
+class Key[T: Pickler](val name: String)(implicit container: KeyContainer) extends PicklerBasedKey[T] {
   container.keys(name) = this
 
   override def toString = name
@@ -25,8 +20,7 @@ extends PicklerBasedKey[T] {
   }
 
   val fullName: String = {
-    @tailrec def context(keyContainer: KeyContainer, acc: List[String] = Nil):
-      String = {
+    @tailrec def context(keyContainer: KeyContainer, acc: List[String] = Nil): String = {
       if (keyContainer == null || keyContainer.containerName.isEmpty) acc.mkString(".")
       else context(keyContainer.enclosing, keyContainer.containerName :: acc)
     }
@@ -39,35 +33,28 @@ extends PicklerBasedKey[T] {
   val pickler: Pickler[T] = implicitly[Pickler[T]]
 }
 
-
 /** Base for keys that have some kind of default value. */
-class KeyWithDefault[T: Pickler](name: String)(implicit container: KeyContainer)
-extends Key[T](name)
-
+class KeyWithDefault[T: Pickler](name: String)(implicit container: KeyContainer) extends Key[T](name)
 
 /** Key that defaults to [[default]] if value under key is not found in a context.
- *
- *  Note that this key type is handled in [[org.scalameter.Context.apply)]].
- */
-class KeyWithDefaultValue[T: Pickler](name: String, val default: T)
-  (implicit container: KeyContainer)
-extends KeyWithDefault[T](name)
-
+  *
+  *  Note that this key type is handled in [[org.scalameter.Context.apply)]].
+  */
+class KeyWithDefaultValue[T: Pickler](name: String, val default: T)(implicit container: KeyContainer)
+    extends KeyWithDefault[T](name)
 
 /** Key that chains finding default value to [[KeyWithDefaultValue]]
- *  if value under key is not found in a context.
- * 
- *  Note that this key type is handled in [[org.scalameter.Context.apply)]].
- */
-class KeyWithDefaultKey[T: Pickler](name: String, val default: KeyWithDefaultValue[T])
-  (implicit container: KeyContainer)
-extends KeyWithDefault[T](name)
-
+  *  if value under key is not found in a context.
+  *
+  *  Note that this key type is handled in [[org.scalameter.Context.apply)]].
+  */
+class KeyWithDefaultKey[T: Pickler](name: String, val default: KeyWithDefaultValue[T])(
+    implicit container: KeyContainer)
+    extends KeyWithDefault[T](name)
 
 object Key extends Keys {
   implicit val ordering: Ordering[Key[_]] = Ordering.by(_.name)
 }
-
 
 abstract class KeyContainer(val containerName: String, val enclosing: KeyContainer) {
   private[scalameter] val subs = mutable.Map[String, KeyContainer]()
@@ -82,8 +69,7 @@ abstract class KeyContainer(val containerName: String, val enclosing: KeyContain
     parseKeyRecursive(keyName, parts.toList)
   }
 
-  private[scalameter] def parseKeyRecursive(fullname: String, keyParts: List[String]):
-    Key[_] = keyParts match {
+  private[scalameter] def parseKeyRecursive(fullname: String, keyParts: List[String]): Key[_] = keyParts match {
     case name :: Nil =>
       // println(containerName, subs, keys, keyParts)
       keys(name)
@@ -95,14 +81,12 @@ abstract class KeyContainer(val containerName: String, val enclosing: KeyContain
   }
 }
 
-
 class Keys extends KeyContainer("", null) {
 
   def apply[T: Pickler](name: String)(implicit container: KeyContainer) =
     new Key[T](name)
 
-  def apply[T: Pickler](name: String, defaultValue: T)
-    (implicit container: KeyContainer) =
+  def apply[T: Pickler](name: String, defaultValue: T)(implicit container: KeyContainer) =
     new KeyWithDefaultValue[T](name, defaultValue)
 
   // Note: predefined keys need to be lazy

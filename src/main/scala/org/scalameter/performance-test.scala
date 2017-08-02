@@ -1,7 +1,5 @@
 package org.scalameter
 
-
-
 import java.util.Date
 import org.scalameter.picklers.Pickler
 import org.scalameter.utils.Tree
@@ -10,26 +8,22 @@ import scala.collection._
 import scala.reflect.ClassTag
 import scala.util.DynamicVariable
 
-
-
 /** Abstract required for the [[org.scalameter.ScalaMeterFramework]] to find all
- *  performance tests.
- */
+  *  performance tests.
+  */
 sealed trait AbstractPerformanceTest {
   def executeTests(): Boolean
 }
 
-
 abstract class BasePerformanceTest[U] extends AbstractPerformanceTest {
   import BasePerformanceTest._
 
-  setupzipper.value =
-    Tree.Zipper.root[Setup[_]](measurer.prepareContext(currentContext ++ defaultConfig))
+  setupzipper.value = Tree.Zipper.root[Setup[_]](measurer.prepareContext(currentContext ++ defaultConfig))
 
   protected case class Scope(name: String, context: Context) {
     def config(kvs: KeyValue*): Scope = config(context ++ Context(kvs: _*))
     def config(ctx: Context): Scope = Scope(name, context ++ ctx)
-    def in(block: =>Unit): Unit = {
+    def in(block: => Unit): Unit = {
       val oldscope = context(Key.dsl.scope)
       descendInScope(name, context + (Key.dsl.scope -> (name :: oldscope))) {
         block
@@ -38,15 +32,15 @@ abstract class BasePerformanceTest[U] extends AbstractPerformanceTest {
   }
 
   protected case class Using[T](benchmark: Setup[T]) {
-    def beforeTests(block: =>Any) =
+    def beforeTests(block: => Any) =
       Using(benchmark.copy(setupbeforeall = Some(() => block)))
     def setUp(block: T => Any) =
       Using(benchmark.copy(setup = Some(block)))
     def tearDown(block: T => Any) =
       Using(benchmark.copy(teardown = Some(block)))
-    def afterTests(block: =>Any) =
+    def afterTests(block: => Any) =
       Using(benchmark.copy(teardownafterall = Some(() => block)))
-    def warmUp(block: =>Any) =
+    def warmUp(block: => Any) =
       Using(benchmark.copy(customwarmup = Some(() => block)))
     def curve(name: String) =
       Using(benchmark.copy(context = benchmark.context + (Key.dsl.curve -> name)))
@@ -73,13 +67,13 @@ abstract class BasePerformanceTest[U] extends AbstractPerformanceTest {
   def defaultConfig: Context = Context.empty
 
   /** Allows rebuilding of setup zipper after test initialization.
-   *
-   *  Default implementation is empty.
-   */
+    *
+    *  Default implementation is empty.
+    */
   def rebuildSetupZipper(): Unit = {}
 
   /** Runs all the tests in this test class or singleton object.
-   */
+    */
   def executeTests(): Boolean = {
     rebuildSetupZipper()
 
@@ -96,13 +90,14 @@ abstract class BasePerformanceTest[U] extends AbstractPerformanceTest {
     }
 
     val dateend: Option[Date] = Some(new Date)
-    val datedtree = resulttree.copy(context = resulttree.context +
-      (Key.reports.startDate -> datestart) + (Key.reports.endDate -> dateend))
+    val datedtree = resulttree.copy(
+      context = resulttree.context +
+        (Key.reports.startDate -> datestart) + (Key.reports.endDate -> dateend))
     reporter.report(datedtree, persistor)
   }
 
   /** The optional executor assigned to a particular body of DSL code.
-   */
+    */
   def executor: Executor[U]
 
   def measurer: Measurer[U]
@@ -112,13 +107,12 @@ abstract class BasePerformanceTest[U] extends AbstractPerformanceTest {
   def persistor: Persistor
 }
 
-
 object BasePerformanceTest {
 
   private[scalameter] val setupzipper =
     new DynamicVariable(Tree.Zipper.root[Setup[_]](currentContext))
 
-  private[scalameter] def descendInScope(name: String, context: Context)(body: =>Unit) {
+  private[scalameter] def descendInScope(name: String, context: Context)(body: => Unit) {
     setupzipper.value = setupzipper.value.descend.setContext(context)
     body
     setupzipper.value = setupzipper.value.ascend
@@ -132,24 +126,26 @@ object BasePerformanceTest {
 
 }
 
-
 trait GroupedPerformanceTest extends BasePerformanceTest[Nothing] {
   private[scalameter] val includes =
     mutable.Set[(BasePerformanceTest[_], Tree.Zipper[Setup[_]])]()
 
-  def include[T <: BasePerformanceTest[_]: ClassTag](newBenchmark: =>T) = {
+  def include[T <: BasePerformanceTest[_]: ClassTag](newBenchmark: => T) = {
     val cls = implicitly[ClassTag[T]].runtimeClass
     if (cls.getSimpleName.endsWith("$")) {
       log.error(
         s"Can only use `include` with anonymous classes instantiated from traits -- " +
-        s"please make ${cls.getName} a trait and " +
-        s"call include(new ${cls.getSimpleName} {}).")
-      events.emit(Event(
-        cls.getName,
-        s"Can only use `include` with anonymous classes instantiated from traits -- " +
-        s"please make ${cls.getName} a trait and " +
-        s"call include(new ${cls.getSimpleName} {}).",
-        Events.Error, new Exception("Cannot use non-anonymous benchmark class.")))
+          s"please make ${cls.getName} a trait and " +
+          s"call include(new ${cls.getSimpleName} {}).")
+      events.emit(
+        Event(
+          cls.getName,
+          s"Can only use `include` with anonymous classes instantiated from traits -- " +
+            s"please make ${cls.getName} a trait and " +
+            s"call include(new ${cls.getSimpleName} {}).",
+          Events.Error,
+          new Exception("Cannot use non-anonymous benchmark class.")
+        ))
     } else {
       val oldvalue = BasePerformanceTest.setupzipper.value
       for (_ <- dyn.currentContext.using(oldvalue.current.context)) {

@@ -9,16 +9,16 @@ import scala.collection.mutable
 import org.scalameter._
 import org.scalameter.execution.invocation._
 
-
 private[scalameter] object Instrumentation {
+
   /** Checks if classes from a given location represented by their classname should be instrumented.
-   *
-   *  Note that it supports reading from directories and jars.
-   *
-   *  @param in location of classes to read from
-   *  @param p predicate that based on full class name decides if a class should be instrumented
-   *  @return [[scala.Iterator]] of tuples in a form of `(fullClassName, instrumentedClassBytes)`
-   */
+    *
+    *  Note that it supports reading from directories and jars.
+    *
+    *  @param in location of classes to read from
+    *  @param p predicate that based on full class name decides if a class should be instrumented
+    *  @return [[scala.Iterator]] of tuples in a form of `(fullClassName, instrumentedClassBytes)`
+    */
   private def filterClasses(in: File, p: String => Boolean): Iterator[(String, InputStream)] = {
     val dirFilter = new FilenameFilter {
       def accept(file: File, s: String): Boolean = new File(file, s).isDirectory
@@ -55,16 +55,18 @@ private[scalameter] object Instrumentation {
   }
 
   /** Writes jar with the instrumented classes to a given file.
-   *
-   *  Note that if the given [[org.scalameter.Context]] does not contain a classpath,
-   *  [[org.scalameter.utils.ClassPath.default]] is used to get a default classpath.
-   *
-   *  @param ctx [[org.scalameter.Context]] with a classpath key
-   *  @param matcher [[org.scalameter.execution.invocation.InvocationCountMatcher]] to match methods that need instrumentation
-   *  @param to writes jar with instrumented to a given file
-   *  @return lookup table of instrumented methods
-   */
-  def writeInstrumentedClasses(ctx: Context, matcher: InvocationCountMatcher, to: File): mutable.ArrayBuffer[MethodSignature] = {
+    *
+    *  Note that if the given [[org.scalameter.Context]] does not contain a classpath,
+    *  [[org.scalameter.utils.ClassPath.default]] is used to get a default classpath.
+    *
+    *  @param ctx [[org.scalameter.Context]] with a classpath key
+    *  @param matcher [[org.scalameter.execution.invocation.InvocationCountMatcher]] to match methods that need instrumentation
+    *  @param to writes jar with instrumented to a given file
+    *  @return lookup table of instrumented methods
+    */
+  def writeInstrumentedClasses(ctx: Context,
+                               matcher: InvocationCountMatcher,
+                               to: File): mutable.ArrayBuffer[MethodSignature] = {
     val lookupTable = mutable.ArrayBuffer.empty[MethodSignature]
     val classpath = ctx.goe(Key.classpath, utils.ClassPath.default)
 
@@ -76,16 +78,18 @@ private[scalameter] object Instrumentation {
       val jos = new JarOutputStream(os, manifest)
       var currentIndex = 0
       try {
-        for (
-          path <- classpath.paths.iterator;
-          (className, classStream) <- filterClasses(path, matcher.classMatches)
-        ) {
+        for (path <- classpath.paths.iterator;
+             (className, classStream) <- filterClasses(path, matcher.classMatches)) {
           val writer = new ClassWriter(ClassWriter.COMPUTE_MAXS)
 
           try {
             val classfileBuffer = utils.IO.readFromInputStream(classStream)
-            val visitor = new MethodInvocationCounterVisitor(writer, matcher, initialIndex = currentIndex,
-              counterClass = classOf[MethodInvocationCounter].getName.replace('.', '/'), counterMethod = "methodCalled")
+            val visitor = new MethodInvocationCounterVisitor(
+              writer,
+              matcher,
+              initialIndex = currentIndex,
+              counterClass = classOf[MethodInvocationCounter].getName.replace('.', '/'),
+              counterMethod = "methodCalled")
             val reader = new ClassReader(classfileBuffer)
             reader.accept(visitor, 0)
             lookupTable ++= visitor.methods
@@ -98,12 +102,10 @@ private[scalameter] object Instrumentation {
           jos.write(writer.toByteArray)
           jos.closeEntry()
         }
-      }
-      finally {
+      } finally {
         jos.close()
       }
-    }
-    finally {
+    } finally {
       os.close()
     }
 

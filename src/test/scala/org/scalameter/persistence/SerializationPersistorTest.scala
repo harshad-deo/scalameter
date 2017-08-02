@@ -1,10 +1,6 @@
 package org.scalameter.persistence
 
-
-
 import org.scalatest.{FunSuite, Matchers}
-
-
 
 class SerializationPersistorTest extends FunSuite with PersistorTest with Matchers {
   val persistor = new SerializationPersistor

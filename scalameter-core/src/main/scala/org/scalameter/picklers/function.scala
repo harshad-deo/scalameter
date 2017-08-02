@@ -1,10 +1,5 @@
 package org.scalameter.picklers
 
-
-
-
-
-
 class Function1Pickler[T, S] extends Pickler[T => S] {
   override def pickle(x: T => S): Array[Byte] =
     StringPickler.pickle(x.getClass.getName)

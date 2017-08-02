@@ -4,7 +4,8 @@ import java.util.Date
 
 @SerialVersionUID(-2666789428423525667L)
 case class History[V](
-  results: Seq[History.Entry[V]], infomap: Map[Key[_], Any] = Map.empty
+    results: Seq[History.Entry[V]],
+    infomap: Map[Key[_], Any] = Map.empty
 ) {
   def info[T](key: Key[T], fallback: T) =
     infomap.getOrElse(key, fallback).asInstanceOf[T]

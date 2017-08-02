@@ -6,10 +6,11 @@ import org.scalatest.FunSuite
 class DefaultQuickBenchTest extends FunSuite {
   test("Measurer.Default on LocalExecutor should execute correctly") {
     try {
-      new DefaultQuickBench executeTests()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+      new DefaultQuickBench executeTests ()
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }
@@ -17,10 +18,11 @@ class DefaultQuickBenchTest extends FunSuite {
 class DefaultMicroBenchTest extends FunSuite {
   test("Measurer.Default on LocalExecutor should execute correctly") {
     try {
-      new DefaultMicroBench executeTests()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+      new DefaultMicroBench executeTests ()
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }
@@ -28,10 +30,11 @@ class DefaultMicroBenchTest extends FunSuite {
 class IgnoringGCQuickBenchTest extends FunSuite {
   test("Measurer.Default on LocalExecutor should execute correctly") {
     try {
-      new IgnoringGCQuickBench executeTests()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+      new IgnoringGCQuickBench executeTests ()
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }
@@ -39,10 +42,11 @@ class IgnoringGCQuickBenchTest extends FunSuite {
 class IgnoringGCMicroBenchTest extends FunSuite {
   test("Measurer.Default on LocalExecutor should execute correctly") {
     try {
-      new IgnoringGCMicroBench executeTests()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+      new IgnoringGCMicroBench executeTests ()
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }
@@ -50,10 +54,11 @@ class IgnoringGCMicroBenchTest extends FunSuite {
 class MemoryQuickBenchTest extends FunSuite {
   test("Measurer.Default on LocalExecutor should execute correctly") {
     try {
-      new MemoryQuickBench executeTests()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+      new MemoryQuickBench executeTests ()
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }
@@ -61,10 +66,11 @@ class MemoryQuickBenchTest extends FunSuite {
 class MemoryMicroBenchTest extends FunSuite {
   test("Measurer.Default on LocalExecutor should execute correctly") {
     try {
-      new MemoryMicroBench executeTests()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+      new MemoryMicroBench executeTests ()
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }
@@ -72,10 +78,11 @@ class MemoryMicroBenchTest extends FunSuite {
 class GCCountQuickBenchTest extends FunSuite {
   test("Measurer.Default on LocalExecutor should execute correctly") {
     try {
-      new GCCountQuickBench executeTests()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+      new GCCountQuickBench executeTests ()
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }
@@ -83,10 +90,11 @@ class GCCountQuickBenchTest extends FunSuite {
 class GCCountMicroBenchTest extends FunSuite {
   test("Measurer.Default on LocalExecutor should execute correctly") {
     try {
-      new GCCountMicroBench executeTests()
-    } catch { case t: Throwable =>
-      t.printStackTrace()
-      throw t
+      new GCCountMicroBench executeTests ()
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
+        throw t
     }
   }
 }

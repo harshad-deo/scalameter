@@ -1,14 +1,10 @@
 package org.scalameter
 
-
-
 import org.scalameter.picklers.Implicits._
 import org.scalameter.picklers.Pickler
 
-
-
 /** Base class for ScalaMeter benchmarks.
- */
+  */
 abstract class Bench[U] extends DSL[U] with Serializable {
 
   def main(args: Array[String]) {
@@ -23,7 +19,6 @@ abstract class Bench[U] extends DSL[U] with Serializable {
 
 }
 
-
 object Bench {
 
   class Group extends Bench[Nothing] with GroupedPerformanceTest {
@@ -34,8 +29,8 @@ object Bench {
   }
 
   /** Benchmark that runs snippets in the same JVM.
-   *  Reports result into the console.
-   */
+    *  Reports result into the console.
+    */
   abstract class Local[U: Pickler] extends Bench[U] {
     def warmer: Warmer = new Warmer.Default
 
@@ -53,8 +48,8 @@ object Bench {
   }
 
   /** Benchmark that runs snippets in separate JVMs.
-   *  Reports result into the console.
-   */
+    *  Reports result into the console.
+    */
   abstract class Forked[U: Pickler: PrettyPrinter] extends Bench[U] {
     def warmer: Warmer = new Warmer.Default
 
@@ -72,8 +67,8 @@ object Bench {
   }
 
   /** Benchmark that runs snippets in separate JVMs.
-   *  It persists results in the gzipped JSON format with appropriate reporter.
-   */
+    *  It persists results in the gzipped JSON format with appropriate reporter.
+    */
   abstract class Persisted[U: Pickler: PrettyPrinter] extends Bench[U] {
     def warmer: Warmer = new Warmer.Default
 
@@ -90,10 +85,10 @@ object Bench {
 
   @deprecated("Please use Bench.LocalTime instead", "0.7")
   type Quickbenchmark = LocalTime
-  
+
   /** Quick benchmark runs snippets in the same JVM.
-   *  Reports execution time into the console.
-   */
+    *  Reports execution time into the console.
+    */
   abstract class LocalTime extends Local[Double] {
     def measurer: Measurer[Double] = new Measurer.Default
     def aggregator: Aggregator[Double] = Aggregator.min
@@ -101,31 +96,29 @@ object Bench {
 
   @deprecated("Please use Bench.ForkedTime instead", "0.7")
   type Microbenchmark = ForkedTime
-  
+
   /** A more reliable benchmark run in a separate JVM.
-   *  Reports execution time into the console.
-   */
+    *  Reports execution time into the console.
+    */
   abstract class ForkedTime extends Forked[Double] {
     def aggregator: Aggregator[Double] = Aggregator.min
-    def measurer: Measurer[Double] = new Measurer.IgnoringGC
-      with Measurer.PeriodicReinstantiation[Double] {
+    def measurer: Measurer[Double] = new Measurer.IgnoringGC with Measurer.PeriodicReinstantiation[Double] {
       override val defaultFrequency = 12
       override val defaultFullGC = true
     }
   }
 
   /** A base for benchmarks generating a more detailed (regression) report,
-   *  potentially online.
-   */
+    *  potentially online.
+    */
   abstract class HTMLReport extends Persisted[Double] {
     import reporting._
     def aggregator: Aggregator[Double] = Aggregator.average
-    def measurer: Measurer[Double] = new Measurer.IgnoringGC
-      with Measurer.PeriodicReinstantiation[Double]
-      with Measurer.OutlierElimination[Double]
+    def measurer: Measurer[Double] =
+      new Measurer.IgnoringGC with Measurer.PeriodicReinstantiation[Double] with Measurer.OutlierElimination[Double]
       with Measurer.RelativeNoise {
-      def numeric: Numeric[Double] = implicitly[Numeric[Double]]
-    }
+        def numeric: Numeric[Double] = implicitly[Numeric[Double]]
+      }
     def tester: RegressionReporter.Tester
     def historian: RegressionReporter.Historian
     def online: Boolean
@@ -136,8 +129,8 @@ object Bench {
   }
 
   /** Runs in separate JVM, performs regression tests and
-   *  prepares HTML document for online hosting.
-   */
+    *  prepares HTML document for online hosting.
+    */
   abstract class OnlineRegressionReport extends HTMLReport {
     import reporting._
     def tester: RegressionReporter.Tester =
@@ -148,8 +141,8 @@ object Bench {
   }
 
   /** Runs in separate JVM, performs regression tests and
-   *  prepares an offline HTML document.
-   */
+    *  prepares an offline HTML document.
+    */
   abstract class OfflineRegressionReport extends HTMLReport {
     import reporting._
     def tester: RegressionReporter.Tester =
@@ -160,8 +153,8 @@ object Bench {
   }
 
   /** Runs in separate JVM and prepares an offline HTML document.
-   *  Does not regression testing.
-   */
+    *  Does not regression testing.
+    */
   abstract class OfflineReport extends HTMLReport {
     import reporting._
     def tester: RegressionReporter.Tester =
@@ -171,26 +164,23 @@ object Bench {
     def online = false
   }
 
-  @deprecated(
-    "This performance test is now deprecated, " +
-    "please use `OnlineRegressionReport` instead.",
-    "0.5")
+  @deprecated("This performance test is now deprecated, " +
+                "please use `OnlineRegressionReport` instead.",
+              "0.5")
   abstract class Regression extends Bench[Double] {
     import reporting._
     def warmer: Warmer = Warmer.Default()
     def aggregator: Aggregator[Double] = Aggregator.average
-    def measurer: Measurer[Double] = new Measurer.IgnoringGC
-      with Measurer.PeriodicReinstantiation[Double]
-      with Measurer.OutlierElimination[Double]
+    def measurer: Measurer[Double] =
+      new Measurer.IgnoringGC with Measurer.PeriodicReinstantiation[Double] with Measurer.OutlierElimination[Double]
       with Measurer.RelativeNoise {
-      def numeric: Numeric[Double] = implicitly[Numeric[Double]]
-    }
+        def numeric: Numeric[Double] = implicitly[Numeric[Double]]
+      }
     def executor: Executor[Double] =
       new execution.SeparateJvmsExecutor(warmer, aggregator, measurer)
     def reporter: Reporter[Double] = Reporter.Composite(
-      new RegressionReporter(
-        RegressionReporter.Tester.OverlapIntervals(),
-        RegressionReporter.Historian.ExponentialBackoff()),
+      new RegressionReporter(RegressionReporter.Tester.OverlapIntervals(),
+                             RegressionReporter.Historian.ExponentialBackoff()),
       HtmlReporter(false)
     )
   }

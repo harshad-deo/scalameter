@@ -1,10 +1,5 @@
 package org.scalameter
 
-
-
-
-
-
 package object reporting {
 
   private[reporting] object ansi {

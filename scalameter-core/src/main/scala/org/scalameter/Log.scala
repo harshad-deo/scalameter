@@ -1,6 +1,5 @@
 package org.scalameter
 
-
 trait Log {
   def error(msg: String): Unit
   def warn(msg: String): Unit
@@ -8,8 +7,8 @@ trait Log {
   def debug(msg: String): Unit
   def trace(t: Throwable): Unit
 
-  def verbose(msg: =>Any) = debug(msg.toString)
-  def apply(msg: =>Any) = info(msg.toString)
+  def verbose(msg: => Any) = debug(msg.toString)
+  def apply(msg: => Any) = info(msg.toString)
 }
 
 object Log {
@@ -45,4 +44,3 @@ object Log {
   }
 
 }
-

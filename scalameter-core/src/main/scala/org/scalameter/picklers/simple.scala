@@ -1,11 +1,7 @@
 package org.scalameter.picklers
 
-
-
 import java.nio.ByteBuffer
 import java.util.Date
-
-
 
 object StringPickler extends Pickler[String] {
   def pickle(x: String): Array[Byte] = {
@@ -24,7 +20,6 @@ object StringPickler extends Pickler[String] {
   }
 }
 
-
 object DatePickler extends Pickler[Date] {
   def pickle(x: Date): Array[Byte] = LongPickler.pickle(x.getTime)
 
@@ -33,7 +28,6 @@ object DatePickler extends Pickler[Date] {
     (new Date(obj), pos)
   }
 }
-
 
 object EnumPickler extends Pickler[java.lang.Enum[_]] {
   def pickle(x: Enum[_]): Array[Byte] = {
@@ -51,7 +45,8 @@ object EnumPickler extends Pickler[java.lang.Enum[_]] {
     val (className, newFrom) = StringPickler.unpickle(a, from)
     val (enumName, pos) = StringPickler.unpickle(a, newFrom)
     val enumClass = Class.forName(className).asInstanceOf[Class[Enum[_]]]
-    val enum = enumClass.getEnumConstants.find(_.toString == enumName)
+    val enum = enumClass.getEnumConstants
+      .find(_.toString == enumName)
       .getOrElse(sys.error("Corrupted stream. Expected java enum."))
     (enum, pos)
   }

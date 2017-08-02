@@ -1,13 +1,8 @@
 package org.scalameter
 
-
-
 import scala.collection._
 
-
-
 class RegressionSeqTest extends Bench.OnlineRegressionReport with SeqTesting
-
 
 trait SeqTesting { this: Bench[Double] =>
 
@@ -15,22 +10,25 @@ trait SeqTesting { this: Bench[Double] =>
 
   def largesizes(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) = Gen.range("size")(from, to, by)
 
-  def lists(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) = for {
-    size <- largesizes(from, to, by)
-  } yield (0 until size).toList
+  def lists(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) =
+    for {
+      size <- largesizes(from, to, by)
+    } yield (0 until size).toList
 
-  def arrays(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) = for {
-    size <- largesizes(from, to, by)
-  } yield (0 until size).toArray
+  def arrays(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) =
+    for {
+      size <- largesizes(from, to, by)
+    } yield (0 until size).toArray
 
-  def vectors(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) = for {
-    size <- largesizes(from, to, by)
-  } yield (0 until size).toVector
+  def vectors(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) =
+    for {
+      size <- largesizes(from, to, by)
+    } yield (0 until size).toVector
 
-  def arraybuffers(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) = for {
-    size <- largesizes(from, to, by)
-  } yield mutable.ArrayBuffer(0 until size: _*)
-
+  def arraybuffers(from: Int = 500000, to: Int = 5000000, by: Int = 1000000) =
+    for {
+      size <- largesizes(from, to, by)
+    } yield mutable.ArrayBuffer(0 until size: _*)
 
   /* Large sequences */
 
@@ -52,7 +50,7 @@ trait SeqTesting { this: Bench[Double] =>
     //     var sum = 0
     //     xs.foreach(sum += _)
     //   }
-      
+
     //   using(vectors(from)) curve("Vector") in { xs =>
     //     var sum = 0
     //     xs.foreach(sum += _)
@@ -69,7 +67,7 @@ trait SeqTesting { this: Bench[Double] =>
     //     xs.foreach(sum += _)
     //   }
     // }
-  
+
     // measure method "reduce" config (
     //   Key.benchRuns -> 36,
     //   Key.independentSamples -> 9,
@@ -101,7 +99,7 @@ trait SeqTesting { this: Bench[Double] =>
     //     _.reduce(_ + _)
     //   }
     // }
-    
+
     // measure method "filter" config (
     //   Key.benchRuns -> 36,
     //   Key.significance -> 1e-13,
@@ -118,7 +116,7 @@ trait SeqTesting { this: Bench[Double] =>
     //   using(arraybuffers(from, to, by)) curve("ArrayBuffer")  in {
     //     _.filter(_ % 2 == 0)
     //   }
-      
+
     //   using(vectors(from, to, by)) curve("Vector") in {
     //     _.filter(_ % 2 == 0)
     //   }
@@ -171,20 +169,3 @@ trait SeqTesting { this: Bench[Double] =>
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

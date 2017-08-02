@@ -6,8 +6,7 @@ import org.scalameter.Key._
 import org.scalameter.utils.Tree
 import scala.collection._
 import scala.collection.JavaConverters._
-import scala.util.parsing.json.{JSONObject, JSONArray}
-
+import scala.util.parsing.json.{JSONArray, JSONObject}
 
 case class HtmlReporter[T: Numeric](embedDsv: Boolean = true) extends Reporter[T] {
   import HtmlReporter._
@@ -114,7 +113,6 @@ case class HtmlReporter[T: Numeric](embedDsv: Boolean = true) extends Reporter[T
 
 }
 
-
 object HtmlReporter {
   val resourceDirs = List("css", "img", "js", "js/ScalaMeter")
 
@@ -141,7 +139,8 @@ object HtmlReporter {
     "js/ScalaMeter/filter.js",
     "js/ScalaMeter/helper.js",
     "js/ScalaMeter/main.js",
-    "js/ScalaMeter/permalink.js" )
+    "js/ScalaMeter/permalink.js"
+  )
 
   val jsDataFile = "js/ScalaMeter/data.js"
 
